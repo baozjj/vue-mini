@@ -29,7 +29,7 @@
 		"sourceMap": false,
 		// https://www.typescriptlang.org/tsconfig#lib
 		"lib": ["esnext", "dom"],
-		// 设置快捷导入
+		// 设置快捷导入 路径映射
 		"baseUrl": ".",
 		"paths": {
       "@vue/*": ["packages/*/src"]
