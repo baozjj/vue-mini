@@ -7,7 +7,8 @@
   <script src="../../dist/vue.js"></script>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+  </div>
 </body>
 
 <script>
@@ -16,6 +17,9 @@
   const obj = reactive({
     name: '张三'
   })
+  const obj2 = reactive({
+    name: '张三2'
+  })
 
   console.log(obj.name);
 
@@ -23,6 +27,9 @@
     document.querySelector('#app').innerText = obj.name
   })
 
-  obj.name = '李四'
+  setTimeout(() => {
+    obj.name = '李四'
+  }, 2000)
+
 </script>
 </html>
