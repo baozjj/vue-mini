@@ -7,17 +7,21 @@
   <script src="../../dist/vue.js"></script>
 </head>
 <body>
-  123
+  <div id="app"></div>
 </body>
 
 <script>
-  const { reactive } = Vue
+  const { reactive, effect } = Vue
 
   const obj = reactive({
     name: '张三'
   })
 
   console.log(obj.name);
+
+  effect(() => {
+    document.querySelector('#app').innerText = obj.name
+  })
 
   obj.name = '李四'
 </script>
