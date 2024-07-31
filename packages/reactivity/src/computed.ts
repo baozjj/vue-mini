@@ -26,4 +26,5 @@ export function computed(getterOrOptions) {
   }
 
   const cRef = new ComputedRefImpl(getter)
+  return cRef
 }
