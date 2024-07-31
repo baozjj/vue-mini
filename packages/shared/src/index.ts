@@ -4,3 +4,7 @@ export const isObject = (val: unknown) =>
 export const hasChanged = (value: any, oldValue: any): boolean => {
   return !Object.is(value, oldValue)
 }
+
+export const isFunction = (val: unknown): val is Function => {
+  return typeof val === 'function'
+}
