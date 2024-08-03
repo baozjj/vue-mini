@@ -81,7 +81,14 @@ export function triggerEffects(dep: Dep) {
   const effects = Array.isArray(dep) ? dep : [...dep]
 
   effects.forEach(effect => {
-    triggerEffect(effect)
+    if (effect.computed) {
+      triggerEffect(effect)
+    }
+  })
+  effects.forEach(effect => {
+    if (!effect.computed) {
+      triggerEffect(effect)
+    }
   })
 }
 
