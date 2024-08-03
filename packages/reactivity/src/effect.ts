@@ -1,19 +1,35 @@
+import { extend } from '@vue/shared'
 import { ComputedRefImpl } from './computed'
 import { Dep, createDep } from './dep'
+
+export type EffectScheduler = (...args: any[]) => any
 
 type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<object, KeyToDepMap>()
 
-export function effect<T = any>(fn: () => T) {
+export interface ReactiveEffectOptions {
+  lazy?: boolean
+  scheduler?: EffectScheduler
+}
+
+export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
   const _effect = new ReactiveEffect(fn)
-  _effect.run()
+  if (options) {
+    extend(_effect, options)
+  }
+  if (!options || !options.lazy) {
+    _effect.run()
+  }
 }
 
 export let activeEffect: ReactiveEffect | undefined
 
 export class ReactiveEffect<T = any> {
   computed?: ComputedRefImpl<T>
-  constructor(public fn: () => T) {}
+  constructor(
+    public fn: () => T,
+    public scheduler: EffectScheduler | null = null
+  ) {}
 
   run() {
     activeEffect = this
@@ -76,7 +92,14 @@ export function triggerEffects(dep: Dep) {
   const effects = Array.isArray(dep) ? dep : [...dep]
 
   effects.forEach(effect => {
-    triggerEffect(effect)
+    if (effect.computed) {
+      triggerEffect(effect)
+    }
+  })
+  effects.forEach(effect => {
+    if (!effect.computed) {
+      triggerEffect(effect)
+    }
   })
 }
 
@@ -86,5 +109,9 @@ export function triggerEffects(dep: Dep) {
  */
 
 export function triggerEffect(effect: ReactiveEffect) {
-  effect.run()
+  if (effect.scheduler) {
+    effect.scheduler()
+  } else {
+    effect.run()
+  }
 }
