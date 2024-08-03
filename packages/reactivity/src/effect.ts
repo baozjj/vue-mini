@@ -14,7 +14,9 @@ export interface ReactiveEffectOptions {
 
 export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
   const _effect = new ReactiveEffect(fn)
-
+  if (options) {
+    extend(_effect, options)
+  }
   if (!options || !options.lazy) {
     _effect.run()
   }
