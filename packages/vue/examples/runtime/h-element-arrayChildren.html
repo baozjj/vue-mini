@@ -18,7 +18,11 @@
     {
       class: 'test'
     },
-    'hello render'
+    [
+      h('p', 'p1'),
+      h('p', 'p2'),
+      h('p', 'p3')
+    ]
   )
   console.log('vnode', vnode);
 
