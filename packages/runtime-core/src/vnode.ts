@@ -1,6 +1,10 @@
 import { isArray, isFunction, isObject, isString } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol('Text')
+export const Comment = Symbol('Comment')
+
 export interface VNode {
   __v_isVNode: true
   type: any
@@ -37,6 +41,9 @@ function createBaseVNode(type, props, children, shapeFlag) {
 
 export function normalizeChildren(vnode: VNode, children: unknown) {
   let type = 0
+
+  console.log(children)
+  console.log(isArray(children))
 
   if (children == null) {
     children = null
