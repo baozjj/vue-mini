@@ -11,7 +11,7 @@ export function h(type: any, propsOrChildren?: any, children?: any): VNode {
 
       return createVNode(type, propsOrChildren, null)
     } else {
-      return createVNode(type, null, [])
+      return createVNode(type, null, propsOrChildren)
     }
   } else {
     if (l > 3) {
