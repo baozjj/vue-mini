@@ -18,3 +18,6 @@ export const isArray = Array.isArray
 export const isString = (val: unknown): val is string => {
   return typeof val === 'string'
 }
+
+const onRE = /^on[^a-z]/
+export const isOn = (key: string) => onRE.test(key)
