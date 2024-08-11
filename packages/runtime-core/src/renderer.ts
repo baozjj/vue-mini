@@ -176,6 +176,9 @@ function baseCreateRenderer(options: RendererOptions): any {
   const render = (vnode, container) => {
     if (vnode === null) {
       // 如果 vnode 为空，执行卸载逻辑（此处省略）
+      if (container._vnode) {
+        unmount(container._vnode)
+      }
     } else {
       // 否则进行渲染或更新
       patch(container._vnode || null, vnode, container)
