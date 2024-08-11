@@ -1,5 +1,5 @@
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
-import { Fragment, Text } from './vnode'
+import { Fragment, Text, isSameVNodeType } from './vnode'
 import { EMPTY_OBJ } from '@vue/shared'
 
 // 渲染器选项接口，定义了操作 DOM 的必要方法
@@ -12,6 +12,7 @@ export interface RendererOptions {
   insert(el, parent: Element, anchor?): void
   // 创建指定类型的元素
   createElement(type: string)
+  remove(el: Element)
 }
 
 // 创建渲染器函数，接收一个渲染器选项对象
@@ -26,7 +27,8 @@ function baseCreateRenderer(options: RendererOptions): any {
     insert: hostInsert,
     patchProp: hostPatchProp,
     createElement: hostCreateElement,
-    setElementText: hostSetElementText
+    setElementText: hostSetElementText,
+    remove: hostRemove
   } = options
 
   // 处理元素节点的函数
@@ -136,6 +138,12 @@ function baseCreateRenderer(options: RendererOptions): any {
     if (oldVNode === newVNode) {
       return // 如果新旧节点相同，则无需更新
     }
+
+    if (oldVNode && !isSameVNodeType(oldVNode, newVNode)) {
+      unmount(oldVNode)
+      oldVNode = null
+    }
+
     const { type, shapeFlag } = newVNode
 
     switch (type) {
@@ -157,6 +165,11 @@ function baseCreateRenderer(options: RendererOptions): any {
         }
         break
     }
+  }
+
+  const unmount = vnode => {
+    // 卸载逻辑
+    hostRemove(vnode.el)
   }
 
   // 渲染函数
