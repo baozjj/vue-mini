@@ -3,8 +3,6 @@ import { isString } from '@vue/shared'
 export function patchStyle(el: Element, prev, next) {
   const style = (el as HTMLElement).style
   const isCssString = isString(next)
-  console.log('isCssString', isCssString)
-  console.log('next', next)
 
   if (next && !isCssString) {
     for (const key in next) {
