@@ -15,6 +15,7 @@ export interface RendererOptions {
   remove(el: Element)
   setText(node: Element, text)
   createText(text: string)
+  createComment(text: string)
 }
 
 // 创建渲染器函数，接收一个渲染器选项对象
@@ -32,8 +33,18 @@ function baseCreateRenderer(options: RendererOptions): any {
     setElementText: hostSetElementText,
     remove: hostRemove,
     createText: hostCreateText,
-    setText: hostSetText
+    setText: hostSetText,
+    createComment: hostCreateComment
   } = options
+
+  const processCommentNode = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      newVNode.el = hostCreateComment(newVNode.children)
+      hostInsert(newVNode.el, container, anchor)
+    } else {
+      newVNode.el = oldVNode.el
+    }
+  }
 
   const processText = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
@@ -169,6 +180,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         break
       case Comment:
         // 处理注释节点（此处省略）
+        processCommentNode(oldVNode, newVNode, container, anchor)
         break
       case Fragment:
         // 处理 Fragment 节点（此处省略）
