@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+
+  <style>
+    .active {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+  </div>
+</body>
+
+<script>
+  const { h, render } = Vue
+
+  const vnode = h(
+    'button',
+    {
+      onClick() {
+        console.log('click');
+      }
+    },
+    'hello world'
+  )
+  render(vnode, document.getElementById('app'))
+
+  setTimeout(() => {
+    const vnode2 = h(
+    'button',
+    {
+      onClick() {
+        console.log('click2222');
+      }
+    },
+    'hello world2'
+  )
+  render(vnode2, document.getElementById('app'))
+  }, 2000)
+
+</script>
+</html>
