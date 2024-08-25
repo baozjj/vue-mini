@@ -13,6 +13,8 @@ export interface RendererOptions {
   // 创建指定类型的元素
   createElement(type: string)
   remove(el: Element)
+  setText(node: Element, text)
+  createText(text: string)
 }
 
 // 创建渲染器函数，接收一个渲染器选项对象
@@ -28,8 +30,22 @@ function baseCreateRenderer(options: RendererOptions): any {
     patchProp: hostPatchProp,
     createElement: hostCreateElement,
     setElementText: hostSetElementText,
-    remove: hostRemove
+    remove: hostRemove,
+    createText: hostCreateText,
+    setText: hostSetText
   } = options
+
+  const processText = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      newVNode.el = hostCreateText(newVNode.children)
+      hostInsert(newVNode.el, container, anchor)
+    } else {
+      const el = (newVNode.el = oldVNode.el!)
+      if (oldVNode.children !== newVNode.children) {
+        hostSetText(el, newVNode.children)
+      }
+    }
+  }
 
   // 处理元素节点的函数
   const processElement = (oldVNode, newVNode, container, anchor) => {
@@ -149,6 +165,7 @@ function baseCreateRenderer(options: RendererOptions): any {
     switch (type) {
       case Text:
         // 处理文本节点
+        processText(oldVNode, newVNode, container, anchor)
         break
       case Comment:
         // 处理注释节点（此处省略）
