@@ -1,6 +1,7 @@
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 import { Fragment, Text, isSameVNodeType } from './vnode'
-import { EMPTY_OBJ } from '@vue/shared'
+import { EMPTY_OBJ, isString } from '@vue/shared'
+import { normalizeVNode } from './componentRenderUtils'
 
 // 渲染器选项接口，定义了操作 DOM 的必要方法
 export interface RendererOptions {
@@ -37,6 +38,14 @@ function baseCreateRenderer(options: RendererOptions): any {
     createComment: hostCreateComment
   } = options
 
+  const processFragment = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      mountChildren(newVNode.children, container, anchor)
+    } else {
+      patchChildren(oldVNode, newVNode, container, anchor)
+    }
+  }
+
   const processCommentNode = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
       newVNode.el = hostCreateComment(newVNode.children)
@@ -66,6 +75,16 @@ function baseCreateRenderer(options: RendererOptions): any {
     } else {
       // 否则为更新过程（此处省略处理逻辑）
       patchElement(oldVNode, newVNode)
+    }
+  }
+
+  const mountChildren = (children, container, anchor) => {
+    if (isString(children)) {
+      children = children.split('')
+    }
+    for (let i = 0; i < children.length; i++) {
+      const child = (children[i] = normalizeVNode(children[i]))
+      patch(null, child, container, anchor)
     }
   }
 
@@ -184,6 +203,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         break
       case Fragment:
         // 处理 Fragment 节点（此处省略）
+        processFragment(oldVNode, newVNode, container, anchor)
         break
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
